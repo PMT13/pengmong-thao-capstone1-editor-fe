@@ -1,0 +1,15 @@
+.form-check-label{
+  margin-right: 2%;
+}
+
+.border-top{
+  margin-top:5%;
+}
+
+button,label,input,.alert{
+  margin-top: 2%;
+}
+
+.btn-danger, .btn-secondary{
+  margin-right: 1%;
+}

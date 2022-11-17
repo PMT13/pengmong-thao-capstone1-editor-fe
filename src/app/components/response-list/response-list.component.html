@@ -1,0 +1,14 @@
+<div class="text-center">
+  <table class="table">
+    <thead class="thead-dark">
+    <tr>
+      <th scope="col" *ngFor="let question of survey.questionSet">{{question.question}}</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let surveyResponse of this.surveyResponses">
+      <td *ngFor="let response of surveyResponse.responses">{{response.response}}</td>
+    </tr>
+    </tbody>
+  </table>
+</div>

@@ -1,0 +1,69 @@
+<div class="border-top border-dark" *ngIf="isEditing === true">
+  <div class="alert alert-danger" role="alert" *ngIf="error === true">{{errorMsg}}</div>
+  <label for="question">Question:</label>
+  <div class="input-group">
+    <input id="question" name="question" class="form-control" type="text" [(ngModel)]="question">
+  </div>
+  <label>Question Type:</label><br>
+  <div class="form-check">
+    <input class="form-check-input" type="radio" name="{{questionInput.questionOrder}}" id="boolean{{questionInput.questionOrder}}"
+            value="boolean"
+            [(ngModel)]="type">
+    <label class="form-check-label" for="boolean{{questionInput.questionOrder}}">
+      Boolean
+    </label>
+  </div>
+  <div class="form-check">
+    <input class="form-check-input" type="radio" name="{{questionInput.questionOrder}}" id="choices{{questionInput.questionOrder}}"
+            value="choices"
+            [(ngModel)]="type">
+    <label class="form-check-label" for="choices{{questionInput.questionOrder}}">
+      Multiple Choice
+    </label>
+  </div>
+  <div class="form-check">
+    <input class="form-check-input" type="radio" name="{{questionInput.questionOrder}}" id="text{{questionInput.questionOrder}}" value="text"
+            [(ngModel)]="type">
+    <label class="form-check-label" for="text{{questionInput.questionOrder}}">
+      Text
+    </label>
+  </div>
+  <div *ngIf="type === 'choices'">
+    <div>
+      Choice 1: <input type="text" [(ngModel)]="choice1">
+    </div>
+    <div>
+      Choice 2: <input type="text" [(ngModel)]="choice2">
+    </div>
+    <div>
+      Choice 3: <input type="text" [(ngModel)]="choice3">
+    </div>
+    <div>
+      Choice 4: <input type="text" [(ngModel)]="choice4">
+    </div>
+  </div>
+</div>
+
+<div *ngIf="isEditing === false">
+  <div class="border-top border-dark"><strong>Question: {{question}}</strong></div>
+  <div *ngIf="type === 'choices'"><strong>Type</strong>: Multiple Choice</div>
+  <div *ngIf="type === 'choices'">
+    <strong>Choices</strong>:
+    <div>a. {{choice1}}</div>
+    <div>b. {{choice2}}</div>
+    <div>c. {{choice3}}</div>
+    <div>d. {{choice4}}</div>
+  </div>
+  <div *ngIf="type === 'boolean'"><strong>Type</strong>: Boolean</div>
+  <div *ngIf="type === 'text'"><strong>Type</strong>: Text</div>
+</div>
+
+<div>
+  <button class="btn btn-danger" (click)="delete()">Delete</button>
+  <button class="btn btn-primary" *ngIf="isEditing === false" (click)="isEditing = true">Edit</button>
+  <button class="btn btn-primary" *ngIf="isEditing === true" (click)="save()">Save</button>
+</div>
+<div>
+  <button class="btn btn-secondary" (click)="moveDown()">Move Down</button>
+  <button *ngIf="questionInput.questionOrder !== 0" class="btn btn-secondary" (click)="moveUp()">Move Up</button>
+</div>

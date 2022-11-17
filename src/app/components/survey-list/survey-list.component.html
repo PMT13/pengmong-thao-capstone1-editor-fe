@@ -1,0 +1,32 @@
+<div class="container text-center">
+  <h1>Surveys (Editor)</h1>
+  <div class="row justify-content-md-center">
+    <div class="col-sm-3 text-center border border-dark rounded-5">
+      <h2>Create New Survey</h2>
+      <h1><i class="bi bi-plus-square-fill" (click)="open(content)"></i></h1>
+    </div>
+    <div class="col-sm-3 text-center border border-dark rounded-5" *ngFor="let survey of surveyList">
+      <h1>{{survey.title}}</h1>
+      <app-survey [survey]="survey"></app-survey>
+    </div>
+  </div>
+</div>
+
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Create Survey</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click');reset()"></button>
+  </div>
+  <div class="modal-body">
+    <div class="alert alert-danger" role="alert" *ngIf="error === true">{{errorMsg}}</div>
+    <label for="title">Survey Title:</label>
+    <div class="input-group">
+      <input id="title" class="form-control" type="text" name="title" [(ngModel)]="title">
+    </div>
+    <app-question *ngFor="let question of questionList" [questionInput]="question" (moveQuestion)="moveQuestion($event)" (deleteQuestion)="deleteQuestion($event)" (updateQuestions)="updateQuestions($event)"></app-question>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-outline-dark" (click)="addQuestion()">Add Another Question</button>
+    <button class="btn btn-outline-dark" (click)="submit()">Submit</button>
+  </div>
+</ng-template>
