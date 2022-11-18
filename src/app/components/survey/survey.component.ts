@@ -23,7 +23,8 @@ export class SurveyComponent implements OnInit, OnDestroy {
   errorMsg: string = "";
   title!: string;
   viewingResponses: boolean = false;
-  modalOption: NgbModalOptions = {}; // not null!
+
+  modalOption: NgbModalOptions = {};
   sub: Subscription;
 
   constructor(private modalService: NgbModal, private dataService: DataService) {
@@ -44,22 +45,28 @@ export class SurveyComponent implements OnInit, OnDestroy {
     this.reset();
   }
 
+  // sort the questions as sometimes thye doesn't come in from the backend in order
   sortQuestions(){
     this.survey.questionSet = this.survey.questionSet.sort(function(a,b){return a.questionOrder - b.questionOrder});
   }
 
+  // sort the responses as sometimes they doesn't come in from the backend in order
   sortResponses(){
     for(let response of this.surveyResponses){
       response.responses = response.responses.sort(function(a,b){return a.responseOrder - b.responseOrder});
     }
   }
 
+  // open the modal for editing and don't allow the user to exit by pressing 'ESC' key or clicking out of modal,
+  // they must click the 'X' mark in the upper right hand corner
   open(content:any) {
     this.modalOption.backdrop = 'static';
     this.modalOption.keyboard = false;
     this.modalService.open(content,this.modalOption);
   }
 
+  // When a new question is added during editing, add a new blank question to the questionlist, and
+  // add an empty response to all existing survey responses that correlate with the new question
   addQuestion() {
     this.questionList.push({
       question: "",
@@ -76,6 +83,7 @@ export class SurveyComponent implements OnInit, OnDestroy {
     this.dataService.getAllResponses();
   }
 
+  // when the edits are submitted, update the survey and responses in the backend
   submit() {
     if(this.title === ""){
       this.error = true;
@@ -107,6 +115,7 @@ export class SurveyComponent implements OnInit, OnDestroy {
     this.modalService.dismissAll();
   }
 
+  // when the 'X' mark is clicked in the modal while editing
   reset() {
     this.questionList = [];
     for(let question of this.survey.questionSet){
@@ -123,35 +132,34 @@ export class SurveyComponent implements OnInit, OnDestroy {
     this.error = false;
   }
 
+  // when a question is edited and then saved, update the question in the list
   updateQuestions(question: IQuestionDTO) {
     this.questionList[question.questionOrder] = question;
     this.setQuestionOrder();
   }
 
+  // when a question is deleted, remove it from the list
   deleteQuestion(questionOrder: number) {
     this.questionList = this.questionList.filter(question => question.questionOrder !== questionOrder);
     this.setQuestionOrder();
   }
 
+  // when a question is deleted, delete the responses associated with that question
   deleteResponse(order: number){
     for(let surveyResponse of this.surveyResponses) {
       const newResponses = surveyResponse.responses.filter(response => response.responseOrder !== order);
       surveyResponse.responses = newResponses;
     }
     this.setResponseOrder();
-    // for(let surveyResponse of this.surveyResponses) {
-    //   this.dataService.updateSurveyResponses(surveyResponse);
-    //   for (let response of surveyResponse.responses) {
-    //     this.dataService.updateResponses(response);
-    //   }
-    // }
   }
 
+  // insert the question into its new position
   moveQuestion(question: IQuestionDTO) {
     this.questionList.splice(question.questionOrder, 0, question);
     this.setQuestionOrder();
   }
 
+  // when a question is moved up, move the responses accordingly in the list so that they line up with their correlating question
   moveResponseUp(order: number){
     for(let surveyResponse of this.surveyResponses){
       let responseCopy = surveyResponse.responses[order];
@@ -159,12 +167,10 @@ export class SurveyComponent implements OnInit, OnDestroy {
       surveyResponse.responses = newResponses;
       surveyResponse.responses.splice(order - 1, 0, responseCopy);
       this.setResponseOrder();
-      // for (let response of surveyResponse.responses) {
-      //   this.dataService.updateResponses(response);
-      // }
     }
   }
 
+  // when a question is moved down, move the responses accordingly in the list so that they line up with their correlating question
   moveResponseDown(order: number){
     for(let surveyResponse of this.surveyResponses){
       const responseCopy = surveyResponse.responses[order];
@@ -172,12 +178,10 @@ export class SurveyComponent implements OnInit, OnDestroy {
       surveyResponse.responses = newResponses;
       surveyResponse.responses.splice(order + 1, 0, responseCopy);
       this.setResponseOrder();
-      // for (let response of surveyResponse.responses) {
-      //   this.dataService.updateResponses(response);
-      // }
     }
   }
 
+  // Make sure the order of the questions are set correctly
   setQuestionOrder(){
     let order = 0;
     for(let question of this.questionList){
@@ -186,6 +190,7 @@ export class SurveyComponent implements OnInit, OnDestroy {
     }
   }
 
+  // Make sure the order of the responses to the questions are set correctly and align with the correct questions
   setResponseOrder(){
     for(let surveyResponse of this.surveyResponses){
       let order = 0;
@@ -196,15 +201,16 @@ export class SurveyComponent implements OnInit, OnDestroy {
     }
   }
 
+  // delete an entire survey
   deleteSurvey() {
     this.dataService.deleteSurvey(this.survey);
   }
 
+  // allow the user to see the responses to the survey in a modal
   viewResponses(content: any) {
     this.modalService.open(content);
     this.dataService.getAllResponses();
     this.sortResponses();
-    this.setResponseOrder();
     this.viewingResponses = true;
   }
 }
