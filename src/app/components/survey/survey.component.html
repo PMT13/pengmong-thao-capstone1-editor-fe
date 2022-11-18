@@ -26,7 +26,7 @@
     <div class="input-group">
       <input id="title" class="form-control" type="text" name="title" [(ngModel)]="title">
     </div>
-    <app-question *ngFor="let question of questionList" [questionInput]="question" (moveQuestion)="moveQuestion($event)" (deleteQuestion)="deleteQuestion($event)" (updateQuestions)="updateQuestions($event)"></app-question>
+    <app-question *ngFor="let question of questionList" [questionInput]="question" (moveResponseUp)="moveResponseUp($event)" (moveResponseDown)="moveResponseDown($event)" (moveQuestion)="moveQuestion($event)" (deleteQuestion)="deleteQuestion($event);" (deleteResponse)="deleteResponse($event)" (updateQuestions)="updateQuestions($event)"></app-question>
   </div>
   <div class="modal-footer">
     <button class="btn btn-outline-dark" (click)="addQuestion()">Add Another Question</button>

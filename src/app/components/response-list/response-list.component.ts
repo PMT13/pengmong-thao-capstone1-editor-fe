@@ -15,6 +15,7 @@ export class ResponseListComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
+    
   }
 
 }

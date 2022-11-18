@@ -12,7 +12,10 @@ export class QuestionComponent implements OnInit {
 
   @Output() updateQuestions = new EventEmitter<IQuestionDTO>();
   @Output() deleteQuestion = new EventEmitter<number>();
+  @Output() deleteResponse = new EventEmitter<number>();
   @Output() moveQuestion = new EventEmitter<IQuestionDTO>();
+  @Output() moveResponseDown = new EventEmitter<number>();
+  @Output() moveResponseUp = new EventEmitter<number>();
   @Input() questionInput!: IQuestionDTO;
 
   question!: string;
@@ -83,17 +86,20 @@ export class QuestionComponent implements OnInit {
 
   delete() {
     this.deleteQuestion.emit(this.questionInput.questionOrder);
+    this.deleteResponse.emit(this.questionInput.questionOrder);
   }
 
   moveDown() {
     this.deleteQuestion.emit(this.questionInput.questionOrder);
-    this.questionInput.questionOrder++; 
+    this.moveResponseDown.emit(this.questionInput.questionOrder);
+    this.questionInput.questionOrder++;
     this.moveQuestion.emit(this.questionInput);
   }
-  
+
   moveUp(){
     this.deleteQuestion.emit(this.questionInput.questionOrder);
-    this.questionInput.questionOrder--; 
+    this.moveResponseUp.emit(this.questionInput.questionOrder);
+    this.questionInput.questionOrder--;
     this.moveQuestion.emit(this.questionInput);
   }
 }
