@@ -1,19 +1,20 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {ISurvey} from "../../interfaces/ISurvey";
-import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
+import {NgbModal, NgbModalOptions} from "@ng-bootstrap/ng-bootstrap";
 import {IResponse} from "../../interfaces/IResponse";
 import {IResponseDTO} from "../../interfaces/IResponseDTO";
 import { DataService } from 'src/app/services/data.service';
 import { IQuestionDTO } from 'src/app/interfaces/IQuestionDTO';
 import { ISurveyDTO } from 'src/app/interfaces/ISurveyDTO';
 import { ISurveyResponses } from 'src/app/interfaces/ISurveyResponses';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-survey',
   templateUrl: './survey.component.html',
   styleUrls: ['./survey.component.css']
 })
-export class SurveyComponent implements OnInit {
+export class SurveyComponent implements OnInit, OnDestroy {
 
   @Input() survey!: ISurvey;
   questionList!: IQuestionDTO[];
@@ -22,8 +23,20 @@ export class SurveyComponent implements OnInit {
   errorMsg: string = "";
   title!: string;
   viewingResponses: boolean = false;
+  modalOption: NgbModalOptions = {}; // not null!
+  sub: Subscription;
 
   constructor(private modalService: NgbModal, private dataService: DataService) {
+    this.dataService.getAllResponses();
+    this.sub =
+      this.dataService.$surveyResponses.subscribe((surveyResponses) => {
+        this.surveyResponses = surveyResponses.filter(response => response.surveyId === this.survey.id);
+        this.sortResponses();
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.sub.unsubscribe();
   }
 
   ngOnInit(): void {
@@ -42,7 +55,9 @@ export class SurveyComponent implements OnInit {
   }
 
   open(content:any) {
-    this.modalService.open(content);
+    this.modalOption.backdrop = 'static';
+    this.modalOption.keyboard = false;
+    this.modalService.open(content,this.modalOption);
   }
 
   addQuestion() {
@@ -52,6 +67,13 @@ export class SurveyComponent implements OnInit {
       type: "",
       choices: ""
     });
+    const emptyResponse: IResponseDTO =
+      {
+        response: "",
+        responseOrder: this.questionList.length - 1
+      }
+    this.dataService.addResponse(emptyResponse,this.survey.id);
+    this.dataService.getAllResponses();
   }
 
   submit() {
@@ -74,6 +96,13 @@ export class SurveyComponent implements OnInit {
         questionList: this.questionList
       }
     this.dataService.updateSurvey(newSurvey, this.survey.id);
+    this.setResponseOrder()
+    for(let surveyResponse of this.surveyResponses){
+      this.dataService.updateSurveyResponses(surveyResponse);
+      for (let response of surveyResponse.responses) {
+        this.dataService.updateResponses(response);
+      }
+    }
     this.reset();
     this.modalService.dismissAll();
   }
@@ -104,11 +133,51 @@ export class SurveyComponent implements OnInit {
     this.setQuestionOrder();
   }
 
+  deleteResponse(order: number){
+    for(let surveyResponse of this.surveyResponses) {
+      const newResponses = surveyResponse.responses.filter(response => response.responseOrder !== order);
+      surveyResponse.responses = newResponses;
+    }
+    this.setResponseOrder();
+    // for(let surveyResponse of this.surveyResponses) {
+    //   this.dataService.updateSurveyResponses(surveyResponse);
+    //   for (let response of surveyResponse.responses) {
+    //     this.dataService.updateResponses(response);
+    //   }
+    // }
+  }
+
   moveQuestion(question: IQuestionDTO) {
     this.questionList.splice(question.questionOrder, 0, question);
     this.setQuestionOrder();
   }
-  
+
+  moveResponseUp(order: number){
+    for(let surveyResponse of this.surveyResponses){
+      let responseCopy = surveyResponse.responses[order];
+      const newResponses = surveyResponse.responses.filter(response => response.id !== surveyResponse.responses[order].id);
+      surveyResponse.responses = newResponses;
+      surveyResponse.responses.splice(order - 1, 0, responseCopy);
+      this.setResponseOrder();
+      // for (let response of surveyResponse.responses) {
+      //   this.dataService.updateResponses(response);
+      // }
+    }
+  }
+
+  moveResponseDown(order: number){
+    for(let surveyResponse of this.surveyResponses){
+      const responseCopy = surveyResponse.responses[order];
+      const newResponses = surveyResponse.responses.filter(response => response.id !== surveyResponse.responses[order].id);
+      surveyResponse.responses = newResponses;
+      surveyResponse.responses.splice(order + 1, 0, responseCopy);
+      this.setResponseOrder();
+      // for (let response of surveyResponse.responses) {
+      //   this.dataService.updateResponses(response);
+      // }
+    }
+  }
+
   setQuestionOrder(){
     let order = 0;
     for(let question of this.questionList){
@@ -116,7 +185,17 @@ export class SurveyComponent implements OnInit {
       order++;
     }
   }
-  
+
+  setResponseOrder(){
+    for(let surveyResponse of this.surveyResponses){
+      let order = 0;
+      for(let response of surveyResponse.responses){
+        response.responseOrder = order;
+        order++;
+      }
+    }
+  }
+
   deleteSurvey() {
     this.dataService.deleteSurvey(this.survey);
   }
@@ -124,8 +203,8 @@ export class SurveyComponent implements OnInit {
   viewResponses(content: any) {
     this.modalService.open(content);
     this.dataService.getAllResponses();
-    this.surveyResponses = this.dataService.surveyResponses.filter(response => response.surveyId === this.survey.id);
     this.sortResponses();
+    this.setResponseOrder();
     this.viewingResponses = true;
   }
 }

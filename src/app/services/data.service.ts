@@ -5,6 +5,9 @@ import {ISurvey} from "../interfaces/ISurvey";
 import {ISurveyResponses} from "../interfaces/ISurveyResponses";
 import {ISurveyResponsesDTO} from "../interfaces/ISurveyResponsesDTO";
 import {ISurveyDTO} from "../interfaces/ISurveyDTO";
+import { IResponse } from '../interfaces/IResponse';
+import { IResponseDTO } from '../interfaces/IResponseDTO';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -74,6 +77,42 @@ export class DataService {
       next: data => {
         this.surveyList = data;
         this.$surveyList.next(this.surveyList);
+      },
+      error: (err) => {
+        alert(err);
+      }
+    })
+  }
+
+  updateResponses(response: IResponse) {
+    this.httpService.updateResponse(response).pipe(first()).subscribe({
+      next: data => {
+        this.surveyResponses = data;
+        this.$surveyResponses.next(this.surveyResponses);
+      },
+      error: (err) => {
+        alert(err);
+      }
+    })
+  }
+
+  addResponse(response: IResponseDTO, surveyId: number) {
+    this.httpService.addResponse(response,surveyId).pipe(first()).subscribe({
+      next: data => {
+        this.surveyResponses = data;
+        this.$surveyResponses.next(this.surveyResponses);
+      },
+      error: (err) => {
+        alert(err);
+      }
+    })
+  }
+
+  updateSurveyResponses(surveyResponse: ISurveyResponses) {
+    this.httpService.updateSurveyResponses(surveyResponse).pipe(first()).subscribe({
+      next: data => {
+        this.surveyResponses = data;
+        this.$surveyResponses.next(this.surveyResponses);
       },
       error: (err) => {
         alert(err);

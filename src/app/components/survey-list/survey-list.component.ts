@@ -60,7 +60,6 @@ export class SurveyListComponent implements OnInit,OnDestroy {
   }
 
   addQuestion() {
-    console.log(this.questionList.length);
     this.questionList.push({
       question: "",
       questionOrder: this.questionList.length,
