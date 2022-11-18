@@ -1,13 +1,20 @@
-<div class="container text-center">
+<div class="container py-2 text-center">
   <h1>Surveys (Editor)</h1>
-  <div class="row justify-content-md-center">
-    <div class="col-sm-3 text-center border border-dark rounded-5">
-      <h2>Create New Survey</h2>
-      <h1><i class="bi bi-plus-square-fill" (click)="open(content)"></i></h1>
+  <div class="row">
+    <div class="col-sm-4 col-md-3 py-3">
+      <div class="card border-dark">
+        <div class="card-body">
+          <h3 class="card-title">Create New Survey</h3>
+          <h1><i class="bi bi-plus-square-fill" (click)="open(content)"></i></h1>
+        </div>
+      </div>
     </div>
-    <div class="col-sm-3 text-center border border-dark rounded-5" *ngFor="let survey of surveyList">
-      <h1>{{survey.title}}</h1>
-      <app-survey [survey]="survey"></app-survey>
+    <div class="col-sm-4 col-md-3 py-3" *ngFor="let survey of surveyList">
+      <div class="card border-dark">
+        <div class="card-body">
+          <app-survey [survey]="survey"></app-survey>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -19,7 +26,7 @@
   </div>
   <div class="modal-body">
     <div class="alert alert-danger" role="alert" *ngIf="error === true">{{errorMsg}}</div>
-    <label for="title">Survey Title:</label>
+    <label for="title"><strong>Survey Title</strong>:</label>
     <div class="input-group">
       <input id="title" class="form-control" type="text" name="title" [(ngModel)]="title">
     </div>

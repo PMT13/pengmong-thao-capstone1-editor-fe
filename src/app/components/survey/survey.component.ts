@@ -90,6 +90,11 @@ export class SurveyComponent implements OnInit, OnDestroy {
       this.errorMsg = "Please give the survey a title!"
       return;
     }
+    if(this.questionList.length === 0){
+      this.error = true;
+      this.errorMsg = "Please have at least one question!"
+      return;
+    }
     for(let question of this.questionList){
       if(question.question === ""){
         this.error = true;
