@@ -10,6 +10,23 @@ button,label,input,.alert{
   margin-top: 2%;
 }
 
-.btn-danger, .btn-secondary{
+.btn-secondary{
   margin-right: 1%;
+}
+
+.bi-trash-fill{
+  font-size: 26px;
+  color: red;
+  cursor: pointer;
+  margin-right: 5%;
+}
+
+.bi-pencil-fill{
+  font-size: 26px;
+  color: cornflowerblue;
+  cursor: pointer;
+}
+
+.editDelete{
+  margin-top: 2%;
 }

@@ -1,13 +1,14 @@
-<button class="btn btn-danger" id="edit" (click)="deleteSurvey()">Delete</button>
-<button class="btn btn-primary" id="delete" (click)="open(content)">Edit</button>
+<i class="bi bi-trash-fill" (click)="deleteSurvey()"></i>
+<i class="bi bi-pencil-fill" (click)="open(content)"></i><br>
+<h3 class="card-title">{{survey.title}}</h3>
 <div>
   <button class="btn btn-success" (click)="viewResponses(responses)">View Responses</button>
 </div>
 
 
 <ng-template #responses let-modal>
-  <div class="modal-header">
-    <h4 class="modal-title">{{survey.title}} Responses</h4>
+  <div class="modal-header text-center">
+    <h4 class="modal-title">"{{survey.title}}" Responses</h4>
     <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
   </div>
   <div class="modal-body">
@@ -17,12 +18,12 @@
 
 <ng-template #content let-modal>
   <div class="modal-header">
-    <h4 class="modal-title" id="modal-basic-title">Create Survey</h4>
+    <h4 class="modal-title" id="modal-basic-title">Edit Survey</h4>
     <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click');reset()"></button>
   </div>
   <div class="modal-body">
     <div class="alert alert-danger" role="alert" *ngIf="error === true">{{errorMsg}}</div>
-    <label for="title">Survey Title:</label>
+    <label for="title"><strong>Survey Title</strong>:</label>
     <div class="input-group">
       <input id="title" class="form-control" type="text" name="title" [(ngModel)]="title">
     </div>

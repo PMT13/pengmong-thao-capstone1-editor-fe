@@ -1,3 +1,25 @@
-#edit, #delete{
-  margin: 2%;
+.bi-trash-fill{
+  font-size: 26px;
+  float: left;
+  color: red;
+  cursor: pointer;
+}
+
+.bi-pencil-fill{
+  font-size: 26px;
+  float: right;
+  color: cornflowerblue;
+  cursor: pointer;
+}
+
+h3{
+  margin-top:10%;
+  margin-bottom: 8%;
+  overflow-x: clip;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+h3:hover{
+  white-space: normal;
 }
