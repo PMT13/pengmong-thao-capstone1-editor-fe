@@ -19,6 +19,7 @@ export class SurveyComponent implements OnInit, OnDestroy {
   @Input() survey!: ISurvey;
   questionList!: IQuestionDTO[];
   surveyResponses!: ISurveyResponses[];
+  surveyResponsesCopy: ISurveyResponses[] = [];
   error: boolean = false;
   errorMsg: string = "";
   title!: string;
@@ -57,9 +58,30 @@ export class SurveyComponent implements OnInit, OnDestroy {
     }
   }
 
+  // Make sure the order of the questions are set correctly
+  setQuestionOrder(){
+    let order = 0;
+    for(let question of this.questionList){
+      question.questionOrder = order;
+      order++;
+    }
+  }
+
+  // Make sure the order of the responses to the questions are set correctly and align with the correct questions
+  setResponseOrder(){
+    for(let surveyResponse of this.surveyResponses){
+      let order = 0;
+      for(let response of surveyResponse.responses){
+        response.responseOrder = order;
+        order++;
+      }
+    }
+  }
+
   // open the modal for editing and don't allow the user to exit by pressing 'ESC' key or clicking out of modal,
   // they must click the 'X' mark in the upper right hand corner
   open(content:any) {
+    this.surveyResponsesCopy = JSON.parse(JSON.stringify(this.surveyResponses));
     this.modalOption.backdrop = 'static';
     this.modalOption.keyboard = false;
     this.modalService.open(content,this.modalOption);
@@ -102,6 +124,7 @@ export class SurveyComponent implements OnInit, OnDestroy {
         return;
       }
     }
+    
     this.setQuestionOrder();
     const newSurvey: ISurveyDTO =
       {
@@ -109,18 +132,20 @@ export class SurveyComponent implements OnInit, OnDestroy {
         questionList: this.questionList
       }
     this.dataService.updateSurvey(newSurvey, this.survey.id);
-    this.setResponseOrder()
+
+    this.setResponseOrder();
     for(let surveyResponse of this.surveyResponses){
       this.dataService.updateSurveyResponses(surveyResponse);
       for (let response of surveyResponse.responses) {
         this.dataService.updateResponses(response);
       }
     }
+
     this.reset();
     this.modalService.dismissAll();
   }
 
-  // when the 'X' mark is clicked in the modal while editing
+  // reset some values
   reset() {
     this.questionList = [];
     for(let question of this.survey.questionSet){
@@ -135,6 +160,18 @@ export class SurveyComponent implements OnInit, OnDestroy {
     }
     this.title = this.survey.title;
     this.error = false;
+  }
+
+  // when the 'X' in the edit modal is clicked
+  exitEdit(){
+    this.reset();
+    this.surveyResponses = JSON.parse(JSON.stringify(this.surveyResponsesCopy));
+    for(let surveyResponse of this.surveyResponses){
+      this.dataService.updateSurveyResponses(surveyResponse);
+      for (let response of surveyResponse.responses) {
+        this.dataService.updateResponses(response);
+      }
+    }
   }
 
   // when a question is edited and then saved, update the question in the list
@@ -183,26 +220,6 @@ export class SurveyComponent implements OnInit, OnDestroy {
       surveyResponse.responses = newResponses;
       surveyResponse.responses.splice(order + 1, 0, responseCopy);
       this.setResponseOrder();
-    }
-  }
-
-  // Make sure the order of the questions are set correctly
-  setQuestionOrder(){
-    let order = 0;
-    for(let question of this.questionList){
-      question.questionOrder = order;
-      order++;
-    }
-  }
-
-  // Make sure the order of the responses to the questions are set correctly and align with the correct questions
-  setResponseOrder(){
-    for(let surveyResponse of this.surveyResponses){
-      let order = 0;
-      for(let response of surveyResponse.responses){
-        response.responseOrder = order;
-        order++;
-      }
     }
   }
 
