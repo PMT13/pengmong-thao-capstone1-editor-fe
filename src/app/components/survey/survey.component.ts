@@ -136,9 +136,6 @@ export class SurveyComponent implements OnInit, OnDestroy {
     this.setResponseOrder();
     for(let surveyResponse of this.surveyResponses){
       this.dataService.updateSurveyResponses(surveyResponse);
-      for (let response of surveyResponse.responses) {
-        this.dataService.updateResponses(response);
-      }
     }
 
     this.reset();
@@ -168,9 +165,6 @@ export class SurveyComponent implements OnInit, OnDestroy {
     this.surveyResponses = JSON.parse(JSON.stringify(this.surveyResponsesCopy));
     for(let surveyResponse of this.surveyResponses){
       this.dataService.updateSurveyResponses(surveyResponse);
-      for (let response of surveyResponse.responses) {
-        this.dataService.updateResponses(response);
-      }
     }
   }
 
