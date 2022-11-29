@@ -57,6 +57,11 @@ export class QuestionComponent implements OnInit {
       this.errorMsg = "Please fill in all choices for Multiple Choice type!"
       return;
     }
+    if(this.type === "choices" && (this.choice1 === undefined || this.choice2 === undefined || this.choice3 === undefined || this.choice4 === undefined)){
+      this.error = true;
+      this.errorMsg = "Please fill in all choices for Multiple Choice type!"
+      return;
+    }
     if(this.type === "choices" && (this.choice1.includes(",") || this.choice2.includes(",") || this.choice3.includes(",") || this.choice4.includes(","))){
       this.error = true;
       this.errorMsg = "No commas allowed in the multiple choice!"
